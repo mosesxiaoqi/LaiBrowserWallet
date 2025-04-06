@@ -1,29 +1,37 @@
-import { touchableStyles } from '../../css/touchableStyles'
-import { ArrowRightUp } from '../ArrowRightUp'
-import { Box } from '../Box'
-import { Checkmark } from '../Checkmark'
-import { Copy } from '../Copy'
-import { Switch } from '../Switch'
-import { Text } from '../Text'
+import { touchableStyles } from "../../css/touchableStyles";
+import { Send } from "../Send";
+import { Box } from "../Box";
+import { Checkmark } from "../Checkmark";
+import { Copy } from "../Copy";
+import { Swap } from "../Swap";
+import { Text } from "../Text";
+import { Buy } from "../Buy";
 
 const icons = {
   copy: <Copy />,
   checkmark: <Checkmark />,
-  arrowRightUp: <ArrowRightUp />,
-  switch: <Switch />
-}
+  swap: <Swap />,
+  send: <Send />,
+  buy: <Buy />,
+};
 
-export type IconButtonKey = keyof typeof icons
+export type IconButtonKey = keyof typeof icons;
 
 interface IconButtonProps {
-  onClick: () => void
-  icon: IconButtonKey
-  label: string
+  onClick: () => void;
+  icon: IconButtonKey;
+  label: string;
 }
 
 export function IconButton({ onClick, icon, label }: IconButtonProps) {
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" gap="2">
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      gap="2"
+    >
       <Box
         as="button"
         background="neutrals1000"
@@ -37,8 +45,8 @@ export function IconButton({ onClick, icon, label }: IconButtonProps) {
         alignItems="center"
         justifyContent="center"
         className={touchableStyles({
-          active: 'shrink',
-          hover: 'grow'
+          active: "shrink",
+          hover: "grow",
         })}
         onClick={onClick}
       >
@@ -49,5 +57,5 @@ export function IconButton({ onClick, icon, label }: IconButtonProps) {
         {label}
       </Text>
     </Box>
-  )
+  );
 }

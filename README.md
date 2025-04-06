@@ -1,5 +1,5 @@
 # LaiBrowserWallet Browser Extension
-LaiBrowserWallet 是一个基于浏览器的加密钱包扩展，旨在为用户提供安全、便捷的区块链交互体验。它实现了 EIP-1193（以太坊提供者 API）和 EIP-6963（多注入提供者发现），目前支持账户显示功能。
+LaiBrowserWallet 是一个基于浏览器的加密钱包扩展，旨在为用户提供安全、便捷的区块链交互体验。它实现了 EIP-1193（以太坊提供者 API）和 EIP-6963（多注入提供者发现），目前支持账户显示功能。关于dapp与钱包的连接，可以阅读[连接指南](https://learnblockchain.cn/article/7300)。
 ## 项目状态
     当前版本是一个早期原型，包含以下功能：
         账户显示：用户可以查看钱包中的账户信息。
@@ -86,30 +86,30 @@ LaiBrowserWallet 是一个基于浏览器的加密钱包扩展，旨在为用户
     |    ├── dist/                    # 构建输出目录，包含打包后的扩展文件
     |    ├── node_modules/            # 依赖目录，由 pnpm 管理
     |    ├── src/                     # 源代码目录
-    │    │   ├── assets/ 
+    │    │   ├── assets/
     │    │   │   ├── images/
     │    │   │   │   ├──eth.png
     │    │   │   │   └──sol.png
     │    │   │   └── icon.png
     |    │   ├── components/          # 可复用组件
-    |    │   │   ├── ArrowRightUp/             
-    |    │   │   │   └── index.tsx    
-    |    │   │   ├── Box/      
-    |    │   │   │   └── index.tsx    
-    |    │   │   ├── Checkmark/      
-    |    │   │   │   └── index.tsx    
-    |    │   │   ├── Copy/      
-    |    │   │   │   └── index.tsx    
-    |    │   │   ├── IconButton/      
-    |    │   │   │   └── index.tsx    
-    |    │   │   ├── Logo/      
-    |    │   │   │   └── index.tsx    
-    |    │   │   ├── Switch/      
-    |    │   │   │   └── index.tsx    
-    |    │   │   ├── Text/      
-    |    │   │   │   └── index.tsx    
-    |    │   │   └── Zorb/      
-    |    │   │       └── index.tsx   
+    |    │   │   ├── ArrowRightUp/
+    |    │   │   │   └── index.tsx
+    |    │   │   ├── Box/
+    |    │   │   │   └── index.tsx
+    |    │   │   ├── Checkmark/
+    |    │   │   │   └── index.tsx
+    |    │   │   ├── Copy/
+    |    │   │   │   └── index.tsx
+    |    │   │   ├── IconButton/
+    |    │   │   │   └── index.tsx
+    |    │   │   ├── Logo/
+    |    │   │   │   └── index.tsx
+    |    │   │   ├── Switch/
+    |    │   │   │   └── index.tsx
+    |    │   │   ├── Text/
+    |    │   │   │   └── index.tsx
+    |    │   │   └── Zorb/
+    |    │   │       └── index.tsx
     |    │   ├── core/                # 样式文件
     |    │   │   ├── EvmProvider.ts
     |    │   │   ├── SolanaProviderts
@@ -129,7 +129,7 @@ LaiBrowserWallet 是一个基于浏览器的加密钱包扩展，旨在为用户
     |    │   ├── utils/              # 页面组件
     |    │   │   ├── AccountUtil.ts
     |    │   │   ├── ConstantsUtil.ts
-    |    │   │   └── HelperUtil.ts/       
+    |    │   │   └── HelperUtil.ts/
     ⏐    │   ├── App.tsx             # 主应用组件，整合所有页面和组件
     ⏐    │   ├── background.ts
     ⏐    │   ├── content.ts
@@ -137,11 +137,10 @@ LaiBrowserWallet 是一个基于浏览器的加密钱包扩展，旨在为用户
     ⏐    │   ├── index.html
     ⏐    │   ├── index.tsx       # 入口文件，渲染 App 并注入扩展逻辑
     ⏐    │   ├── inpage.ts
-    |    │   └── manifest.json         
+    |    │   └── manifest.json
     │    ├── .babelrc
     |    ├── .env.local
     |    ├── package.json            # 项目依赖和脚本配置
     |    ├── tsconfig.json           # TypeScript 配置文件（假设存在）
     |    └── webpack.config.js       # Webpack 构建配置文件
     └──README.md
-
