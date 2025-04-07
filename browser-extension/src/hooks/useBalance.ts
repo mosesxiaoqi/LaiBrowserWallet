@@ -6,14 +6,17 @@ import {
 } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 import Big from "big.js";
-import { formatEther } from "viem";
+import { formatEther, Account, Address } from "viem";
 // import { sepolia } from "viem/chains";
 // import { useBalance as useWagmiBalance } from "wagmi";
 import { getPublicClient } from "../core/create/create_mnemonics";
 
 // const supportedChains = ["ethereum", "sepolia"];
 
-export function useBalance(chain: "ethereum" | "solana", account: string) {
+export function useBalance(
+  chain: "ethereum" | "solana",
+  account: Account | string | undefined,
+) {
   // query: { enabled } 是 react-query 提供的选项。
   // enabled 是一个布尔值，决定是否启用查询
   // 如果 chain === 'ethereum'，enabled = true，启动查询
@@ -27,11 +30,11 @@ export function useBalance(chain: "ethereum" | "solana", account: string) {
   //   },
   // });
   const { data: ethBalance } = useQuery({
-    queryKey: ["ethBalance", account],
+    queryKey: ["transactionHash", account],
     queryFn: async () => {
       const client = getPublicClient();
       const balance = await client.getBalance({
-        address: account as `0x${string}`,
+        address: (account as Account).address,
       });
       return formatEther(balance ?? BigInt(0));
     },
@@ -44,7 +47,7 @@ export function useBalance(chain: "ethereum" | "solana", account: string) {
     queryKey: ["balance", account],
     queryFn: async () => {
       const connection = new Connection(clusterApiUrl("mainnet-beta"));
-      const wallet = new PublicKey(account);
+      const wallet = new PublicKey(account as string);
       const balance = await connection.getBalance(wallet);
 
       // eslint-disable-next-line new-cap

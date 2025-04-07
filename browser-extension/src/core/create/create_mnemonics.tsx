@@ -1,4 +1,9 @@
-import { mnemonicToAccount, generateMnemonic, english } from "viem/accounts";
+import {
+  mnemonicToAccount,
+  generateMnemonic,
+  english,
+  privateKeyToAccount,
+} from "viem/accounts";
 import {
   createWalletClient,
   createPublicClient,
@@ -6,6 +11,7 @@ import {
   WalletClient,
   PublicClient,
   HttpTransport,
+  toHex,
 } from "viem";
 import { mainnet, sepolia, Chain } from "viem/chains";
 import CryptoJS from "crypto-js";
@@ -174,6 +180,11 @@ export function generateAccount(mnemonic: string, addressIndex = 0) {
   const path = `m/44'/60'/0'/0/${addressIndex}` as `m/44'/60'/${string}`;
 
   const account = mnemonicToAccount(mnemonic, { path });
+  // console.log("私钥", toHex(account.getHdKey().privateKey!));
+  // const account1 = privateKeyToAccount(
+  //   "0x758a564d4775fdcf2e2dae31f14eef6c31f1afd3f8abe5bad42f289ab4a6a3e0",
+  // );
+  // console.log("地址", account1.address);
   return account;
 }
 
@@ -203,7 +214,7 @@ let currentTransportConfig = { url: transports[currentChain.id] }; // 默认使�
 // 5. （可选）创建钱包客户端，用于与区块链交互
 
 // 获取全局 WalletClient（确保单例）
-export async function getWalletClient(): Promise<WalletClient> {
+export function getWalletClient(): WalletClient {
   if (!laiWalletClient) {
     laiWalletClient = createWalletClient({
       //由于账户可能会更换，因此在钱包的前端更换账户时，发生变化的是当前活动账户的私钥，而不是整个钱包的私钥。因此，钱包客户端应该支持动态切换私钥。

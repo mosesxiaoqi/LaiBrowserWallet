@@ -1,4 +1,8 @@
+import { rei } from "viem/chains";
 import * as mnemonic from "./create_mnemonics";
+import { Account } from "viem";
+
+let accounts: Account[] = [];
 
 // 检查是否创建了钱包
 export async function checkWalletCreated() {
@@ -20,13 +24,19 @@ export function createWallet(password: string) {
   const encryptedMnemonic = mnemonic.encryptMnemonic(wallet_mnemonic, password);
   // 3. 保存加密后的助记词
   mnemonic.saveEncryptedMnemonic(encryptedMnemonic);
-
   const address = mnemonic.generateAddress(wallet_mnemonic);
 
   return {
     mnemonic: wallet_mnemonic,
     address: address,
   };
+}
+export async function getAccount() {
+  if (!accounts[0]) {
+    console.log("accounts[0].address is null");
+  }
+  console.log(accounts[0].address);
+  return accounts[0];
 }
 
 export async function getWalletaddress() {
@@ -37,13 +47,12 @@ export async function getWalletaddress() {
     throw new Error("No wallet found");
   }
   const wallet_mnemonic = mnemonic.decryptMnemonic(encryptedMnemonic);
-  const addresses: string[] = [];
   for (let i = 0; i < currentIndex; i++) {
     const account = mnemonic.generateAccount(wallet_mnemonic, i);
     console.log(`Wallet ${i + 1}: ${account.address}`);
-    addresses.push(account.address);
+    accounts.push(account);
   }
   let walletName = await mnemonic.getWalletName();
   console.log(`Wallet name: ${walletName}`);
-  return { addresses, walletName };
+  return { accounts, walletName };
 }

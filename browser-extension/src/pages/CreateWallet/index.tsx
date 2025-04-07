@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box } from "../../components/Box";
 import { Text } from "../../components/Text";
 // import { Button } from "../../components/Button"; // 假设你有一个 Button 组件
@@ -13,17 +13,18 @@ export function CreateWallet({
   const [confirmed, setConfirmed] = useState(false);
 
   // 将助记词拆分为单词数组
-  const words = walletInfo.mnemonic.split(" ");
+  const words = walletInfo!.mnemonic.split(" ");
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     // 存储助记词（实际应用中应加密存储）
     // 更安全的存储方式可以使用 Web Crypto API 或IndexedDB
     // 这里为了功能演示，直接存储在 localStorage 中
     // 存储一个名为 laiWalletInitialized 的键，值为字符串 `"true",表示用户已经完成了钱包的初始化过程
     // localStorage.setItem("laiWalletInitialized", "true");
     createLocalWallet.setWalletInitialized();
+    await createLocalWallet.getWalletaddress();
     // 通知父组件完成初始化
-    onComplete(walletInfo.mnemonic);
+    onComplete(walletInfo!.mnemonic);
   };
 
   return (

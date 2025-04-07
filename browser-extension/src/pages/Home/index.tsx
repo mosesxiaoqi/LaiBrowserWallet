@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-
+import { parseEther, Account, Address } from "viem"; // 假设使用viem库进行单位转换
 import { Keypair } from "@solana/web3.js";
 import Big from "big.js";
 // import { privateKeyToAccount } from "viem/accounts";
@@ -15,6 +15,7 @@ import { HelperUtil } from "../../utils/HelperUtil";
 import { NetworkSelector } from "../../components/Network/NetworkSelector";
 import { getWalletaddress } from "../../core/create/create_local_wallet";
 import { switchChain } from "../../core/create/create_mnemonics";
+import { TransactionComponent } from "../../components/Transaction";
 
 // // EVM
 // const { address } = await getWalletaddress();
@@ -29,16 +30,16 @@ export function Home() {
   // 当前显示的区块链网络
   const [page, setPage] = useState<"ethereum" | "solana">("ethereum");
 
-  const [evmAddress, setEvmAddress] = useState(""); // 存储EVM地址
+  const [evmAddress, setEvmAddress] = useState<Account>(); // 存储EVM地址
   const [isLoading, setIsLoading] = useState(true); // 添加加载状态
 
   // 获取钱包地址
   useEffect(() => {
     async function fetchAddress() {
       try {
-        const { addresses, walletName } = await getWalletaddress();
-        console.log("获取钱包:", addresses[0]);
-        setEvmAddress(addresses[0]);
+        const { accounts, walletName } = await getWalletaddress();
+        console.log("获取钱包:", accounts); //获取的是账户，不是地址
+        setEvmAddress(accounts[0]);
       } catch (error) {
         console.error("获取钱包地址失败:", error);
       } finally {
@@ -52,9 +53,9 @@ export function Home() {
   const isEVM = page === "ethereum"; //isEVM 是一个布尔值 (true 或 false)   // 仅当 page 为 'ethereum' 时，isEVM 才是 true
   // 获取当前网络对应的账户地址
   const account = isEVM ? evmAddress : publicKey.toString();
-  console.log("evm钱包:", evmAddress);
-  console.log("当前钱包:", account);
-
+  if (evmAddress !== undefined) {
+    console.log("evm钱包:", evmAddress.address);
+  }
   // ?? 是 JavaScript 的 空值合并运算符。
   // 当 page 为 null 或 undefined 时，返回 'ethereum' 作为默认值。
   const balance = useBalance(page ?? "ethereum", account);
@@ -63,7 +64,7 @@ export function Home() {
 
   // 状态管理
   const [selectedNetwork, setSelectedNetwork] = useState(1);
-
+  const [showTransactionUI, setShowTransactionUI] = useState(false);
   // 网络变更处理函数
   const handleNetworkChange = (networkId: number) => {
     setSelectedNetwork(networkId);
@@ -80,14 +81,26 @@ export function Home() {
         label: "Copy",
         onClick: async () => {
           setCopied(true); //// 设为已复制状态
-          navigator.clipboard
-            .writeText(account)
-            .then(() => {
-              // alert("successfully copied");
-            })
-            .catch(() => {
-              alert("something went wrong");
-            }); // 复制地址到剪贴板
+          if (account && typeof (account as Account).address === "string") {
+            navigator.clipboard
+              .writeText((account as Account).address)
+              .then(() => {
+                // alert("successfully copied");
+              })
+              .catch(() => {
+                alert("something went wrong");
+              }); // 复制地址到剪贴板
+          } else {
+            navigator.clipboard
+              .writeText(account as string)
+              .then(() => {
+                // alert("successfully copied");
+              })
+              .catch(() => {
+                alert("something went wrong");
+              }); // 复制地址到剪贴板
+          }
+
           // 验证复制是否成功
           // const clipboardText = await navigator.clipboard.readText();
           // console.log("剪贴板内容:", clipboardText);
@@ -109,12 +122,7 @@ export function Home() {
       send: {
         label: "Send",
         onClick: () => {
-          // window.open(
-          //   isEVM
-          //     ? `https://etherscan.io/address/${account}`
-          //     : `https://explorer.solana.com/address/${account}`,
-          //   "_blank",
-          // );
+          setShowTransactionUI(true);
         },
       },
       buy: {
@@ -188,6 +196,71 @@ export function Home() {
         >
           <Text>加载钱包地址中...</Text>
         </Box>
+      ) : showTransactionUI ? (
+        <Box
+          height="full"
+          width="full"
+          display="flex"
+          // style={{
+          //   // top: "100%",
+          //   left: "0px",
+          //   bottom: "0",
+          //   backgroundColor: "rgba(0, 0, 0, 0.5)",
+          //   zIndex: "1000",
+          // }}
+          position="fixed"
+          right="0"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Box
+            style={{
+              borderRadius: "8px",
+              width: "90%",
+              maxWidth: "500px",
+              padding: "20px",
+              backgroundColor: "white",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+              maxHeight: "60vh",
+              overflowY: "auto",
+            }}
+          >
+            <Box
+              style={{
+                marginBottom: "20px",
+              }}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Text as="h2" fontSize="18" fontWeight="medium" color="black">
+                发送交易
+              </Text>
+              <button
+                className="close-btn"
+                onClick={() => setShowTransactionUI(false)}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                }}
+              >
+                &times;
+              </button>
+            </Box>
+
+            <TransactionComponent
+              fromAddress={account as Account}
+              balance={parseEther(balance)}
+              onClose={() => setShowTransactionUI(false)}
+              onSuccess={() => {
+                setShowTransactionUI(false);
+                // 可能需要刷新余额或其他状态
+              }}
+            />
+          </Box>
+        </Box>
       ) : (
         <>
           <NetworkSelector
@@ -212,7 +285,7 @@ export function Home() {
               <Zorb />
               <Text as="h1" textAlign="center" fontSize="18" color="white">
                 {/* 显示缩短的地址 */}
-                {HelperUtil.shortenAddress(account)}
+                {HelperUtil.shortenAddress((account as Account).address)}
               </Text>
               <Box display="flex" alignItems="center" gap="4">
                 {Object.entries(iconOptions).map(
